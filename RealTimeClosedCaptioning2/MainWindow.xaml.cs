@@ -112,24 +112,33 @@ namespace RealTimeClosedCaptioning2
 
         private async void Start_Click(object sender, RoutedEventArgs e)
         {
-            var config = SpeechConfig.FromSubscription(SpeechKey.Text, SpeechRegion.Text);
-            //var exe = new System.IO.FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            //config.SetProperty(PropertyId.Speech_LogFilename, System.IO.Path.Combine(exe.DirectoryName, "log.txt"));
-            recognizer = new SpeechRecognizer(config, AudioConfig.FromMicrophoneInput((Microphone.SelectedItem as ComboBoxItem).Tag.ToString()));
+            var status = "Ready!";
 
-            recognizer.Recognizing += Recognizer_Recognizing;
-            recognizer.Recognized += Recognizer_Recognized;
-            //recognizer.Canceled += Recognizer_Canceled;
-            //recognizer.SessionStarted += Recognizer_SessionStarted;
-            //recognizer.SessionStopped += Recognizer_SessionStopped;
-            //recognizer.SpeechEndDetected += Recognizer_SpeechEndDetected;
-            //recognizer.SpeechStartDetected += Recognizer_SpeechStartDetected;
+            try
+            {
+                var config = SpeechConfig.FromSubscription(SpeechKey.Text, SpeechRegion.Text);
+                //var exe = new System.IO.FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                //config.SetProperty(PropertyId.Speech_LogFilename, System.IO.Path.Combine(exe.DirectoryName, "log.txt"));
+                recognizer = new SpeechRecognizer(config, AudioConfig.FromMicrophoneInput((Microphone.SelectedItem as ComboBoxItem).Tag.ToString()));
 
-            await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+                recognizer.Recognizing += Recognizer_Recognizing;
+                recognizer.Recognized += Recognizer_Recognized;
+                //recognizer.Canceled += Recognizer_Canceled;
+                //recognizer.SessionStarted += Recognizer_SessionStarted;
+                //recognizer.SessionStopped += Recognizer_SessionStopped;
+                //recognizer.SpeechEndDetected += Recognizer_SpeechEndDetected;
+                //recognizer.SpeechStartDetected += Recognizer_SpeechStartDetected;
+
+                await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                status = $"Error: {ex.Message}";
+            }
 
             Dispatcher.Invoke(() =>
             {
-                MessageBlock.Text = "Ready!";
+                MessageBlock.Text = status;
                 Controls.Visibility = Visibility.Hidden;
             });
         }
